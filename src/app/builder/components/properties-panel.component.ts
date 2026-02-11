@@ -15,7 +15,7 @@ import { Configurable } from '../models/configurable';
       <h3>{{ selectedItemName() }}</h3>
 
       @if (selectedItem(); as item) {
-        @for (field of item.getFormFields(); track field.key) {
+        @for (field of getFormFields(item); track field.key) {
           <div class="form-group">
             <label>{{ field.label }}</label>
 
@@ -68,7 +68,7 @@ import { Configurable } from '../models/configurable';
   `,
   styles: [`
     .properties-panel { padding: 16px; border-left: 1px solid #ddd; height: 100%; overflow-y: auto; }
-    .form-group { margin-bottom: 16px; }
+    .form-group { margin-bottom: 16px; width: calc(100% - 20px);}
     label { display: block; margin-bottom: 4px; font-weight: 500; }
     input, select, textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
     textarea { min-height: 80px; }
