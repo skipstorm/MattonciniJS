@@ -1,0 +1,23 @@
+<div class="home">
+  <h1>Template Builder</h1>
+
+  @if (lastOpened) {
+    <div class="continue-card">
+      <h3>Continua da dove eri rimasto</h3>
+      <p><strong>{{ lastOpened.name }}</strong></p>
+      <button (click)="continueLast()">Riprendi modifica →</button>
+    </div>
+  }
+
+  <h2>Tutti i template</h2>
+  <div class="grid">
+    @for (t of templates; track t.id) {
+      <div class="card" (click)="openTemplate(t)">
+        <img [src]="t.previewImage" alt="{{t.name}}">
+        <h3>{{ t.name }}</h3>
+      </div>
+    }
+  </div>
+
+  <button class="new-btn" (click)="newBlankTemplate()">+ Nuovo template vuoto</button>
+</div>
