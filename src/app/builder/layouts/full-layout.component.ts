@@ -8,6 +8,7 @@ import { Configurable } from '../models/configurable';
 })
 export class FullLayoutComponent extends Configurable {
   @Configurable.FormField({ type: 'color', label: 'Sfondo' })
+  @Input() section: any; 
   background = '#ffffff';
 
   override type = 'full';

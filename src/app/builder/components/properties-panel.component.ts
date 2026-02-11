@@ -101,4 +101,62 @@ export class PropertiesPanelComponent {
   handleImageError(event: Event) {
     (event.target as HTMLImageElement).style.display = 'none';
   }
+  
+  getFormFields(item: any): any[] {
+    // Caso 1: item è null/undefined
+    if (!item) return [];
+    
+    // Caso 2: item è un'istanza di Configurable (ha il metodo getFormFields)
+    if (item instanceof Configurable && typeof item.getFormFields === 'function') {
+      return item.getFormFields();
+    }
+    
+    // Caso 3: item ha un metodo getFormFields (duck typing)
+    if (typeof item.getFormFields === 'function') {
+      try {
+        return item.getFormFields();
+      } catch (e) {
+        console.warn('Errore chiamando getFormFields:', e);
+        return [];
+      }
+    }
+    
+    // Caso 4: item ha una proprietà 'properties' (es. Section o ComponentInstance)
+    if (item.properties && typeof item.properties === 'object') {
+      return Object.keys(item.properties).map(key => ({
+        key: key,
+        label: this.formatLabel(key),
+        type: this.inferType(item.properties[key]),
+        value: item.properties[key]
+      }));
+    }
+    
+    // Caso 5: genera campi da tutte le proprietà dell'oggetto
+    return Object.keys(item)
+      .filter(key => !key.startsWith('_') && key !== 'id' && key !== 'type' && typeof item[key] !== 'function')
+      .map(key => ({
+        key: key,
+        label: this.formatLabel(key),
+        type: this.inferType(item[key]),
+        value: item[key]
+      }));
+  }
+
+  private formatLabel(key: string): string {
+    return key
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/^./, str => str.toUpperCase())
+      .trim();
+  }
+
+  private inferType(value: any): string {
+    if (typeof value === 'boolean') return 'toggle';
+    if (typeof value === 'number') return 'number';
+    if (typeof value === 'string') {
+      if (value.startsWith('#')) return 'color';
+      if (value.startsWith('http://') || value.startsWith('https://')) return 'image_url';
+      if (value.length > 100) return 'textarea';
+    }
+    return 'text';
+  }
 }
